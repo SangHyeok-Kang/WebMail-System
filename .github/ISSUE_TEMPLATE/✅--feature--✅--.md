@@ -7,12 +7,12 @@ assignees: ''
 
 ---
 
-📝 Description
+## 📝 Description
 설명을 작성하세요.
 
-📍 Todo
--[ ]  todo
--[ ]  todo
+## 📍 Todo
+- [ ]  todo
+- [ ]  todo
 
-📢 To Reviewers
+## 📢 To Reviewers
 🔗 Reference
