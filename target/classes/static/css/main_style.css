@@ -81,6 +81,14 @@ td#subject {
     text-align: left;
 }
 
+#signup_main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 30vh; /* 화면 전체 높이를 기준으로 중앙에 위치 */
+}
+
 #addrbook, #msgBody {
     margin-top: 50px;
     margin-left: 240px;

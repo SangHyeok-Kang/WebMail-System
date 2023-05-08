@@ -24,4 +24,6 @@ public class CommandType {
 
     public final static int LOGIN = 91;
     public final static int LOGOUT = 92;
+    
+    public final static int SIGNUP = 93;
 }
