@@ -3,6 +3,7 @@
     Author     : jongmin
 --%>
 
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="deu.cse.spring_webmail.control.CommandType" %>
 
@@ -21,7 +22,7 @@
         </script>
     </head>
     <body>
-        <jsp:include page="../header.jspf" />
+            <%@include file="../header.jspf"%>
 
         <div id="sidebar">
             <%-- 사용자 추가때와 동일하므로 같은 메뉴 사용함. --%>

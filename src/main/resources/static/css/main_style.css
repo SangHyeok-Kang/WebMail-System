@@ -67,6 +67,14 @@ td#subject {
     line-height: 200%;
     /* border: red ridge medium; */
 }
+#session_timeout {
+    color: fuchsia;
+    margin: 100px 200px 100px 200px;
+    padding: 50px;
+    line-height: 200%;
+    /* border: red ridge medium; */
+}
+
 
 #sidebar {
     margin: 20px 10px 10px 10px;

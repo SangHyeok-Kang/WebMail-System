@@ -7,9 +7,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
-
-
-
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -25,10 +22,10 @@
 
         <%@include file="header.jspf"%>
 
-        <p id="login_fail">
-            <%= request.getParameter("userid")%>님, 로그인이 실패하였습니다.
+        <p id="session_timeout">
+            로그인이 실패하였습니다. <br>
 
-            올바른 사용자 ID와 암호를 사용하여 로그인하시기 바랍니다.
+            올바른 사용자 ID와 암호를 사용하여 로그인하시기 바랍니다. <br>
 
             5초 뒤 자동으로 초기 화면으로 돌아갑니다.
 
