@@ -9,7 +9,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>회원가입</title>
@@ -24,24 +24,24 @@
             <form name="AddUser" action="signup_user.do" method="POST">
                 <table border="0" align="left">
                     <tr>
-                        <td>이름 </td>
-                        <td> <input type="text" name="username" value="" /> </td>
+                        <th scope="col">이름 </th>
+                        <th scope="col"> <input type="text" name="username" value="" /> </th>
                     </tr>
                     <tr>
-                        <td>사용자 ID</td>
-                        <td> <input type="text" name="id" value="" size="20" />  </td>
+                        <th scope="col">사용자 ID</th>
+                        <th scope="col"> <input type="text" name="id" value="" size="20" />  </th>
                     </tr>
                     <tr>
-                        <td>암호 </td>
-                        <td> <input type="password" name="password" value="" /> </td>
+                        <th scope="col">암호 </th>
+                        <th scope="col"> <input type="password" name="password" value="" /> </th>
                     </tr>
                     
                     <tr>
-                        <td colspan="2">
+                        <th colspan="2">
                             <input type="submit" value="회원가입" name="register" />
                             <input type="reset" value="초기화" name="reset" />
                             <button type="button" onclick="history.back()">뒤로가기</button>
-                        </td>
+                        </th>
                     </tr>
                 </table>
 
