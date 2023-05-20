@@ -126,6 +126,11 @@ public class SystemController {
         return "login_fail";
     }
 
+    @GetMapping("/session_timeout")
+    public String sessionTimeOut() {
+        return "session_timeout";
+    }
+    
     protected boolean isAdmin(String userid) {
         boolean status = false;
 
@@ -138,11 +143,12 @@ public class SystemController {
 
     @GetMapping("/main_menu")
     public String mainmenu(Model model) {
+        
         Pop3Agent pop3 = new Pop3Agent();
         pop3.setHost((String) session.getAttribute("host"));
         pop3.setUserid((String) session.getAttribute("userid"));
         pop3.setPassword((String) session.getAttribute("password"));
-
+        
         String messageList = pop3.getMessageList();
         model.addAttribute("messageList", messageList);
         return "main_menu";
@@ -150,6 +156,10 @@ public class SystemController {
 
     @GetMapping("/admin_menu")
     public String adminMenu(Model model) {
+
+        
+        
+        
         log.debug("root.id = {}, root.password = {}, admin.id = {}",
                 ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
 
@@ -193,6 +203,7 @@ public class SystemController {
 
     @GetMapping("/add_user")
     public String addUser() {
+
         return "admin/add_user";
     }
 
