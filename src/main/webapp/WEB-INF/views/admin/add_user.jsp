@@ -28,6 +28,10 @@
             <form name="AddUser" action="add_user.do" method="POST">
                 <table border="0" align="left">
                     <tr>
+                        <td>이름 </td>
+                        <td> <input type="text" name="username" value="" /> </td>
+                    </tr>
+                    <tr>
                         <td>사용자 ID</td>
                         <td> <input type="text" name="id" value="" size="20" />  </td>
                     </tr>
