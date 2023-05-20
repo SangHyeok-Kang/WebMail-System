@@ -1,3 +1,4 @@
 # Maven
 log/
 target/
+target/*
