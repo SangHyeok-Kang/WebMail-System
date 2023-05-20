@@ -21,6 +21,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/*.do") // 해당 경로는 인터셉터가 가로채지 않는다.
                 .excludePathPatterns("/") // 해당 경로는 인터셉터가 가로채지 않는다.
                 .excludePathPatterns("/session_timeout") // 해당 경로는 인터셉터가 가로채지 않는다.
-                .excludePathPatterns("/login_fail"); // 해당 경로는 인터셉터가 가로채지 않는다.
+                .excludePathPatterns("/login_fail") // 해당 경로는 인터셉터가 가로채지 않는다.
+                .excludePathPatterns("/signup"); // 해당 경로는 인터셉터가 가로채지 않는다.
+        
+        
     }
 }
