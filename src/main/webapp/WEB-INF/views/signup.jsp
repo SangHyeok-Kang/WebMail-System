@@ -23,6 +23,7 @@
 
             <form name="AddUser" action="signup_user.do" method="POST">
                 <table border="0" align="left">
+                    <caption>회원가입 테이블</caption>
                     <tr>
                         <th scope="col">이름 </th>
                         <th scope="col"> <input type="text" name="username" value="" /> </th>
@@ -37,7 +38,7 @@
                     </tr>
                     
                     <tr>
-                        <th colspan="2">
+                        <th scope="col">
                             <input type="submit" value="회원가입" name="register" />
                             <input type="reset" value="초기화" name="reset" />
                             <button type="button" onclick="history.back()">뒤로가기</button>
