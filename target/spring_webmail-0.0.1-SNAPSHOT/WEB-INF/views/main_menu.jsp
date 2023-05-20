@@ -3,6 +3,12 @@
     Created on : 2022. 6. 10., 오후 3:15:45
     Author     : skylo
 --%>
+<%
+response.setHeader("Pragma", "no-cache"); 
+response.setHeader("Cache-Control", "no-cache"); 
+response.setHeader("Cache-Control", "no-store"); 
+response.setDateHeader("Expires", 0L); 
+%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 

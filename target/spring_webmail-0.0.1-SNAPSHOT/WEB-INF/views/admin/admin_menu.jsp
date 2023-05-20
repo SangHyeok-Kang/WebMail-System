@@ -3,6 +3,7 @@
     Author     : jongmin
 --%>
 
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="deu.cse.spring_webmail.model.UserAdminAgent"%>
 
@@ -23,8 +24,8 @@
         </script>
     </head>
     <body>
-        <jsp:include page="../header.jspf" />
-
+        
+            <%@include file="../header.jspf"%>
         <div id="sidebar">
             <jsp:include page="sidebar_admin_menu.jsp" />
         </div>

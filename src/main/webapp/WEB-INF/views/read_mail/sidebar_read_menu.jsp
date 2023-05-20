@@ -2,6 +2,12 @@
     Document   : sidebar_adduser_menu
     Author     : jongmin
 --%>
+<%
+response.setHeader("Pragma", "no-cache"); 
+response.setHeader("Cache-Control", "no-cache"); 
+response.setHeader("Cache-Control", "no-store"); 
+response.setDateHeader("Expires", 0L); 
+%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
