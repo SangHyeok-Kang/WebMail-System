@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ClassPathResource;
@@ -20,12 +20,20 @@ public class SpringWebmailApplication {
         SpringApplication.run(SpringWebmailApplication.class, args);
     }
 
-    /**
-     * https://stackoverflow.com/questions/21533679/can-a-propertiesfactorybean-read-a-value-from-application-yml
-     * @return 
-     */
     @Bean(name="systemProperties")
     public PropertiesFactoryBean systemProperties() {
+        
+        log.debug("runProperties() called...");
+        StandardPBEStringEncryptor spe = new StandardPBEStringEncryptor();
+        spe.setAlgorithm("PBEWithMD5AndDES");
+        spe.setPassword("gulio");
+        System.out.println("admin = " + spe.encrypt("admin"));      
+        System.out.println("ip = " + spe.encrypt("113.198.236.222"));      
+        System.out.println("url = " + spe.encrypt("jdbc:mysql://113.198.236.222:9090/mail?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul"));      
+        System.out.println("id = " + spe.encrypt("root"));      
+        System.out.println("db pw = " + spe.encrypt("1q2w3e4r"));
+        
+        
         log.debug("systemProperties() called...");
         PropertiesFactoryBean bean = new PropertiesFactoryBean();
         bean.setLocation(new ClassPathResource("/system.properties"));
