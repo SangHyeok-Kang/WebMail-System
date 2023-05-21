@@ -13,6 +13,7 @@ import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +26,13 @@ import lombok.extern.slf4j.Slf4j;
 public class JasyptConfig {
 
   @Bean("jasyptStringEncryptor")
-    public StringEncryptor stringEncryptor() {
+    public StringEncryptor stringEncryptor() throws FileNotFoundException, IOException {
 
         log.debug("config is 호출");
-//        BufferedReader br = new BufferedReader(new FileReader("./key.txt"));
-//        String key = br.readLine();
-//        br.close();
-
-        String key = "gulio";
+        BufferedReader br = new BufferedReader(new FileReader("./key.txt"));
+        String key = br.readLine();
+        br.close();
+       
         //key 암호화  
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();

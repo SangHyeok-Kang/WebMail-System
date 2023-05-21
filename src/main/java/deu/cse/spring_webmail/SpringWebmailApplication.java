@@ -23,15 +23,11 @@ public class SpringWebmailApplication {
     @Bean(name="systemProperties")
     public PropertiesFactoryBean systemProperties() {
         
-        log.debug("runProperties() called...");
-        StandardPBEStringEncryptor spe = new StandardPBEStringEncryptor();
-        spe.setAlgorithm("PBEWithMD5AndDES");
-        spe.setPassword("gulio");
-        System.out.println("admin = " + spe.encrypt("admin"));      
-        System.out.println("ip = " + spe.encrypt("113.198.236.222"));      
-        System.out.println("url = " + spe.encrypt("jdbc:mysql://113.198.236.222:9090/mail?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul"));      
-        System.out.println("id = " + spe.encrypt("root"));      
-        System.out.println("db pw = " + spe.encrypt("1q2w3e4r"));
+        // 아래를 통해 프로그램 run 시 암호화된 값 확인 가능
+        //StandardPBEStringEncryptor spe = new StandardPBEStringEncryptor();
+        //spe.setAlgorithm("PBEWithMD5AndDES");
+        //spe.setPassword("암호화 키");
+        // System.out.println("ip = " + spe.encrypt("113.198.236.222"));      
         
         
         log.debug("systemProperties() called...");
