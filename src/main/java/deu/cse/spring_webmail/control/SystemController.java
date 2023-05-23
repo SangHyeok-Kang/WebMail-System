@@ -10,6 +10,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -55,7 +59,7 @@ public class SystemController {
     private String mysqlServerIp;
     @Value("${mysql.server.port}")
     private String mysqlServerPort;
-    
+
     @Value("${root.id}")
     private String ROOT_ID;
     @Value("${root.password}")
@@ -130,7 +134,7 @@ public class SystemController {
     public String sessionTimeOut() {
         return "session_timeout";
     }
-    
+
     protected boolean isAdmin(String userid) {
         boolean status = false;
 
@@ -143,12 +147,12 @@ public class SystemController {
 
     @GetMapping("/main_menu")
     public String mainmenu(Model model) {
-        
+
         Pop3Agent pop3 = new Pop3Agent();
         pop3.setHost((String) session.getAttribute("host"));
         pop3.setUserid((String) session.getAttribute("userid"));
         pop3.setPassword((String) session.getAttribute("password"));
-        
+
         String messageList = pop3.getMessageList();
         model.addAttribute("messageList", messageList);
         return "main_menu";
@@ -157,9 +161,6 @@ public class SystemController {
     @GetMapping("/admin_menu")
     public String adminMenu(Model model) {
 
-        
-        
-        
         log.debug("root.id = {}, root.password = {}, admin.id = {}",
                 ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
 
@@ -276,7 +277,7 @@ public class SystemController {
         String userName = env.getProperty("spring.datasource.username");
         String pass = env.getProperty("spring.datasource.password");
         String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
-        
+
         String cwd = ctx.getRealPath(".");
         UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
                 ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
@@ -332,4 +333,173 @@ public class SystemController {
         return null;
     }
 
+    @GetMapping("read_book")
+    public String bookRead() {
+        return "read_book";
+    }
+
+    @GetMapping("add_book")
+    public String bookAdd() {
+        return "add_book";
+    }
+
+    @GetMapping("search_book")
+    public String bookMod() {
+        return "search_book";
+    }
+
+    @GetMapping("mod_book")
+    public String bookMod2() {
+        return "mod_book";
+    }
+
+    @GetMapping("del_book")
+    public String bookDel() {
+        return "del_book";
+    }
+    
+    @PostMapping("/insert")
+    public String insertAddress(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("phone") String phone,
+            @RequestParam("adder") String adder, RedirectAttributes attrs) {
+        try {
+            final String JdbcDriver = "com.mysql.cj.jdbc.Driver";
+            final String JdbcUrl = "jdbc:mysql://113.198.236.222:9090/mail?serverTimezone=Asia/Seoul";
+            final String User = "root";
+            final String Password = "1q2w3e4r";
+
+            Class.forName(JdbcDriver);
+
+            try (Connection conn = DriverManager.getConnection(JdbcUrl, User, Password); PreparedStatement pstmt = conn.prepareStatement("INSERT INTO addrbook (name, email, phone, adder) VALUES (?, ?, ?, ?)")) {
+
+                pstmt.setString(1, name);
+                pstmt.setString(2, email);
+                pstmt.setString(3, phone);
+                pstmt.setString(4, adder);
+
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    attrs.addFlashAttribute("msg", String.format("주소록 추가되었습니다."));
+                    return "redirect:read_book";
+                } else {
+                    attrs.addFlashAttribute("msg", String.format("주소록 추가 실패하였습니다."));
+                    return "redirect:add_book";
+                }
+            }
+        } catch (Exception ex) {
+            // 예외 처리 로직
+            ex.printStackTrace();
+        }
+        return "redirect:read_book";
+    }
+    
+    @PostMapping("/update")
+    public String updateAddress(
+            @RequestParam("email") String email,
+            @RequestParam("name") String name,
+            @RequestParam("phone") String phone, RedirectAttributes attrs) {
+        try {
+            final String JdbcDriver = "com.mysql.cj.jdbc.Driver";
+            final String JdbcUrl = "jdbc:mysql://113.198.236.222:9090/mail?serverTimezone=Asia/Seoul";
+            final String User = "root";
+            final String Password = "1q2w3e4r";
+
+            Class.forName(JdbcDriver);
+
+            try (Connection conn = DriverManager.getConnection(JdbcUrl, User, Password); PreparedStatement pstmt = conn.prepareStatement("UPDATE addrbook SET name = ?, phone = ? WHERE email = ?")) {
+
+                pstmt.setString(1, name);
+                pstmt.setString(2, phone);
+                pstmt.setString(3, email);
+
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    // 수정 성공 시 처리할 로직
+                    attrs.addFlashAttribute("msg", String.format("주소록 수정이 완료되었습니다."));
+                    return "redirect:read_book";
+                } else {
+                    // 수정 실패 시 처리할 로직
+                    attrs.addFlashAttribute("msg", String.format("주소록 수정 실패하였습니다."));
+                    return "redirect:search_book";
+                }
+            }
+        } catch (Exception ex) {
+            // 예외 처리 로직
+            ex.printStackTrace();
+            // 에러 메시지 등을 처리
+        }
+
+        // 리디렉션할 페이지로 이동
+        return "redirect:read_book";
+    }
+    
+    @PostMapping("/delete")
+    public String deleteAddress(@RequestParam("email") String email, Model model, RedirectAttributes attrs) {
+        try {
+            final String JdbcDriver = "com.mysql.cj.jdbc.Driver";
+            final String JdbcUrl = "jdbc:mysql://113.198.236.222:9090/mail?serverTimezone=Asia/Seoul";
+            final String User = "root";
+            final String Password = "1q2w3e4r";
+
+            Class.forName(JdbcDriver);
+
+            try (Connection conn = DriverManager.getConnection(JdbcUrl, User, Password); PreparedStatement pstmt = conn.prepareStatement("DELETE FROM addrbook WHERE email = ?")) {
+                pstmt.setString(1, email);
+                int rowsAffected = pstmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    // 삭제 성공 시 처리할 로직
+                    attrs.addFlashAttribute("msg", String.format("주소록 삭제되었습니다."));
+                    return "redirect:del_book";
+                } else {
+                    // 삭제 실패 시 처리할 로직
+                    attrs.addFlashAttribute("msg", String.format("주소록 삭제 실패하였습니다."));
+                }
+            }
+        } catch (Exception ex) {
+            // 예외 처리 로직
+            ex.printStackTrace();
+        }
+
+        return "del_book";
+    }
+    
+    @PostMapping("/search")
+    public String searchBook(@RequestParam("email") String email, Model model) {
+        try {
+            final String JdbcDriver = "com.mysql.cj.jdbc.Driver";
+            final String JdbcUrl = "jdbc:mysql://113.198.236.222:9090/mail?serverTimezone=Asia/Seoul";
+            final String User = "root";
+            final String Password = "1q2w3e4r";
+
+            Class.forName(JdbcDriver);
+
+            try (Connection conn = DriverManager.getConnection(JdbcUrl, User, Password); PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM addrbook WHERE email = ?")) {
+
+                pstmt.setString(1, email);
+
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    String name = rs.getString("name");
+                    String phone = rs.getString("phone");
+
+                    model.addAttribute("email", email);
+                    model.addAttribute("name", name);
+                    model.addAttribute("phone", phone);
+
+                    return "mod_book";
+                } else {
+                    
+                }
+            }
+        } catch (Exception ex) {
+            // 예외 처리 로직
+            ex.printStackTrace();
+        }
+
+        return "redirect:search_book";
+    }
 }
