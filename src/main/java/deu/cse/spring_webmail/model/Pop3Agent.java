@@ -134,9 +134,9 @@ public class Pop3Agent {
         } catch (Exception ex) {
             log.error("Pop3Agent.getMessageList() : exception = {}", ex.getMessage());
             result = "Pop3Agent.getMessageList() : exception = " + ex.getMessage();
-        } finally {
-            return Integer.toString(messages.length)+result;
-        }
+        } 
+        return Integer.toString(messages.length)+result;
+        
     }
 
     public String getMessage(int n) {
