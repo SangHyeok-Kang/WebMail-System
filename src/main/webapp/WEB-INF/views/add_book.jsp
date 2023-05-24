@@ -24,7 +24,7 @@
                 제출 버튼을 눌러주세요.
             </h3>
             <form action="insert" method="POST">
-                <table border="2">
+                <table border="2" summary="addrbook">
                     <thead><th></th></thead>
                     <tbody>
                         <tr>

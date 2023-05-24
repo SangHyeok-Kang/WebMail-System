@@ -25,7 +25,7 @@
 
         <div id="main">
             <h3>수정하시고자 하는 이메일을 작성 후, 검색 버튼을 눌러주세요.</h3>
-            <table border="1">
+            <table border="1" summary="addrbook">
                 <thead><th></th></thead>
                 <tbody>
                 <form action="search" method="post">

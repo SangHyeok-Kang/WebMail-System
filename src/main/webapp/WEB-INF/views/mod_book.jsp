@@ -24,7 +24,7 @@
 
         <div id="main">
             <h3>검색된 주소록</h3>
-            <table border="2">
+            <table border="2" summary="addrbook">
                 <thead>
                     <tr>
                         <th>이름</th>
@@ -42,7 +42,7 @@
             </table>
             <br>
             <h3>검색된 주소록의 이름과 전화번호입니다.<br>수정하시고자하는 내용을 적고 수정 버튼을 눌러주세요.</h3>
-            <table border="1">
+            <table border="1" summary="addrbook">
                 <thead>
                     <tr>
                         <th>이름</th>
