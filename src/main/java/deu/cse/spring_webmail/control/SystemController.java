@@ -11,6 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +57,7 @@ public class SystemController {
     private String mysqlServerIp;
     @Value("${mysql.server.port}")
     private String mysqlServerPort;
-    
+
     @Value("${root.id}")
     private String ROOT_ID;
     @Value("${root.password}")
@@ -130,7 +132,7 @@ public class SystemController {
     public String sessionTimeOut() {
         return "session_timeout";
     }
-    
+
     protected boolean isAdmin(String userid) {
         boolean status = false;
 
@@ -143,13 +145,32 @@ public class SystemController {
 
     @GetMapping("/main_menu")
     public String mainmenu(Model model) {
-        
+
         Pop3Agent pop3 = new Pop3Agent();
         pop3.setHost((String) session.getAttribute("host"));
         pop3.setUserid((String) session.getAttribute("userid"));
         pop3.setPassword((String) session.getAttribute("password"));
-        
+
+        String messageList_c = "";
         String messageList = pop3.getMessageList();
+        messageList = messageList.replace("<table>", "<table id=\"mailTable\">");
+
+        String patt = "^(\\d+)";
+        Pattern pattern = Pattern.compile(patt);
+        Matcher matcher = pattern.matcher(messageList);
+        if (matcher.find()) {
+            messageList_c = matcher.group();
+            messageList = messageList.replaceAll(patt, "");
+            
+        }
+                
+        int count = Integer.parseInt(messageList_c) / 5;
+        
+        if(Integer.parseInt(messageList_c) % 5 > 0)
+            count++;
+           
+        log.info("메시지리스트 갸수 = {}", count);
+        model.addAttribute("messageList_c", count);
         model.addAttribute("messageList", messageList);
         return "main_menu";
     }
@@ -157,9 +178,6 @@ public class SystemController {
     @GetMapping("/admin_menu")
     public String adminMenu(Model model) {
 
-        
-        
-        
         log.debug("root.id = {}, root.password = {}, admin.id = {}",
                 ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
 
@@ -276,7 +294,7 @@ public class SystemController {
         String userName = env.getProperty("spring.datasource.username");
         String pass = env.getProperty("spring.datasource.password");
         String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
-        
+
         String cwd = ctx.getRealPath(".");
         UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
                 ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
