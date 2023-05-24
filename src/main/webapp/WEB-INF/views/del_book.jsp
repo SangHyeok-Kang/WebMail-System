@@ -4,7 +4,7 @@
 <%@taglib tagdir="/WEB-INF/tags" prefix="mytags"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="ko">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
@@ -29,6 +29,7 @@
 
             <h3>삭제하시고자 하는 이메일을 작성 후, 삭제 버튼을 눌러주세요.</h3>
             <table border="1">
+                <thead><th></th></thead>
                 <tbody>
                 <form action="delete" method="post">
                     <tr>

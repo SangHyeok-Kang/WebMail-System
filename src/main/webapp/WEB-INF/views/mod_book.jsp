@@ -3,7 +3,7 @@
 
 
 <!DOCTYPE html>
-<html>
+<html lang="ko">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
@@ -58,7 +58,7 @@
                     <tbody>
                         <tr>
                             <td colspan="3">
-                    <center><button type="submit">수정</button></center></td>
+                                <button type="submit">수정</button></td>
                 </form>
                 </tr>
                 </tbody>

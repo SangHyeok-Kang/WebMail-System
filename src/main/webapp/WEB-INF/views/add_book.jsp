@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
@@ -25,6 +25,7 @@
             </h3>
             <form action="insert" method="POST">
                 <table border="2">
+                    <thead><th></th></thead>
                     <tbody>
                         <tr>
                             <td>이름</td>
@@ -42,11 +43,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3"><center>
-                        <input type="submit" value="제출"/>
-                        <input type="reset" value="초기화"/>
-                    </center></td>
-                    </tr>
+                            <td colspan="3">
+                                <input type="submit" value="제출"/>
+                                <input type="reset" value="초기화"/>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </form>
