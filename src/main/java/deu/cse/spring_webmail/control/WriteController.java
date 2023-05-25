@@ -4,54 +4,79 @@
  */
 package deu.cse.spring_webmail.control;
 
+import deu.cse.spring_webmail.model.Pop3Agent;
 import deu.cse.spring_webmail.model.SmtpAgent;
+import deu.cse.spring_webmail.model.SaveMailService;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * 메일 쓰기를 위한 제어기
- * 
+ *
  * @author Prof.Jong Min Lee
  */
 @Controller
 @PropertySource("classpath:/system.properties")
+@PropertySource("classpath:/config.properties")
 @Slf4j
 public class WriteController {
+
+    @Value("${mysql.server.ip}")
+    private String mysqlServerIp;
+    @Value("${mysql.server.port}")
+    private String mysqlServerPort;
+    @Autowired
+    private Environment env;
+
     @Value("${file.upload_folder}")
     private String UPLOAD_FOLDER;
     @Value("${file.max_size}")
     private String MAX_SIZE;
-    
+
     @Autowired
     private ServletContext ctx;
     @Autowired
     private HttpSession session;
-    
+
     @GetMapping("/write_mail")
     public String writeMail() {
         log.debug("write_mail called...");
         session.removeAttribute("sender");  // 220612 LJM - 메일 쓰기 시는 
         return "write_mail/write_mail";
+
     }
-    
+
+    @GetMapping("/relay_mail")
+    public String relayMail() {
+        log.debug("relay_mail called...");
+        session.removeAttribute("sender");  // 220612 LJM - 메일 쓰기 시는 
+        return "write_mail/relay_mail";
+    }
+
     @PostMapping("/write_mail.do")
-    public String writeMailDo(@RequestParam String to, @RequestParam String cc, 
-            @RequestParam String subj, @RequestParam String body, 
-            @RequestParam(name="file1") MultipartFile upFile,
+    public String writeMailDo(@RequestParam String to, @RequestParam String cc,
+            @RequestParam String subj, @RequestParam String body,
+            @RequestParam(name = "file1") MultipartFile upFile,
             RedirectAttributes attrs) {
         log.debug("write_mail.do: to = {}, cc = {}, subj = {}, body = {}, file1 = {}",
                 to, cc, subj, body, upFile.getOriginalFilename());
@@ -73,30 +98,52 @@ public class WriteController {
         } else {
             attrs.addFlashAttribute("msg", "메일 전송이 실패했습니다.");
         }
-        
+
         return "redirect:/main_menu";
     }
-    
+
+    @GetMapping("/save_temp_mail.do")
+    public String SaveMail(String subj, String refer, String body, RedirectAttributes attrs) {
+
+        if (subj.isEmpty() && refer.isEmpty() && body.isEmpty()) {
+            attrs.addFlashAttribute("msg", "임시 저장할 내용이 없습니다.");
+ 
+        } else if (!subj.isEmpty() || !refer.isEmpty() || !body.isEmpty()) {
+            String user = (String) session.getAttribute("userid");
+            String userName = env.getProperty("spring.datasource.username");
+            String password = env.getProperty("spring.datasource.password");
+            String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+            log.debug("ip = {}, port = {}", this.mysqlServerIp, this.mysqlServerPort);
+
+            SaveMailService savemailservice = new SaveMailService(mysqlServerIp, mysqlServerPort, userName, password, jdbcDriver);
+
+            boolean saveSuccessful = savemailservice.SaveTmpMail(user, subj, body, refer);
+            if (saveSuccessful) {
+                attrs.addFlashAttribute("msg", "임시 저장이 완료되었습니다.");
+            } else {
+                attrs.addFlashAttribute("msg", "임시 저장이 실패하였습니다.");
+            }
+
+        }
+        return "redirect:/main_menu";
+    }
+
     /**
-     * FormParser 클래스를 사용하지 않고 Spring Framework에서 이미 획득한 매개변수 정보를 사용하도록
-     * 기존 webmail 소스 코드를 수정함.
-     * 
+     * FormParser 클래스를 사용하지 않고 Spring Framework에서 이미 획득한 매개변수 정보를 사용하도록 기존
+     * webmail 소스 코드를 수정함.
+     *
      * @param to
      * @param cc
      * @param sub
      * @param body
      * @param upFile
-     * @return 
+     * @return
      */
     private boolean sendMessage(String to, String cc, String subject, String body, MultipartFile upFile) {
         boolean status = false;
 
         // 1. toAddress, ccAddress, subject, body, file1 정보를 파싱하여 추출
-
-
         // 2.  request 객체에서 HttpSession 객체 얻기
-
-
         // 3. HttpSession 객체에서 메일 서버, 메일 사용자 ID 정보 얻기
         String host = (String) session.getAttribute("host");
         String userid = (String) session.getAttribute("userid");
@@ -108,7 +155,7 @@ public class WriteController {
         agent.setSubj(subject);
         agent.setBody(body);
         String fileName = upFile.getOriginalFilename();
-        
+
         if (fileName != null && !"".equals(fileName)) {
             log.debug("sendMessage: 파일({}) 첨부 필요", fileName);
             File f = new File(ctx.getRealPath(UPLOAD_FOLDER) + File.separator + fileName);
@@ -121,4 +168,5 @@ public class WriteController {
         }
         return status;
     }  // sendMessage()
+
 }
