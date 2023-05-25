@@ -207,7 +207,7 @@ public class SystemController {
                     ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
             // if (addUser successful)  사용자 등록 성공 팦업창
             // else 사용자 등록 실패 팝업창
-            if (agent.addUser(id, password) && agent.addUserDB(username, id, password)) {
+            if ( agent.addUserDB(username, id, password) && agent.addUser(id, password)) {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 성공하였습니다.", id));
             } else {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 실패하였습니다.", id));
@@ -243,7 +243,7 @@ public class SystemController {
 
             // if (addUser successful)  사용자 등록 성공 팦업창
             // else 사용자 등록 실패 팝업창
-            if (agent.addUser(id, password) && agent.addUserDB(username, id, password)) {
+            if ( agent.addUserDB(username, id, password) && agent.addUser(id, password)) {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 성공하였습니다.", id));
             } else {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 실패하였습니다.", id));
