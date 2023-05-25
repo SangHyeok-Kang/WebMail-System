@@ -2,12 +2,6 @@
     Document   : sidebar_adduser_menu
     Author     : jongmin
 --%>
-<%
-response.setHeader("Pragma", "no-cache"); 
-response.setHeader("Cache-Control", "no-cache"); 
-response.setHeader("Cache-Control", "no-store"); 
-response.setDateHeader("Expires", 0L); 
-%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
@@ -24,7 +18,7 @@ response.setDateHeader("Expires", 0L);
         <span style="color: indigo">
             <strong>사용자: <%= session.getAttribute("userid") %> </strong>
         </span> <br> <br>
-        
+        <p><a href="relay_mail?sender=<%=session.getAttribute("sender") %>">전달 하기</a></p>
         <p><a href="write_mail?sender=<%= session.getAttribute("sender") %>"> 답장 하기 </a></p>
         <p><a href="main_menu"> 이전 메뉴로 </a></p>
     </body>

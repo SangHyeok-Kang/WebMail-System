@@ -18,6 +18,6 @@
         <span style="color: indigo">
             <strong>사용자: <%= session.getAttribute("userid") %> </strong>
         </span> <br> <br>        
-        <a href="javascript:history.back()"> 이전 메뉴로 </a>
+        <a href="main_menu">이전 메뉴로 </a>
     </body>
 </html>

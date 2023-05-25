@@ -221,9 +221,6 @@ public class UserAdminAgent {
     } // parseUserList()
 
     public boolean deleteUsers(String[] userList) {
-        byte[] messageBuffer = new byte[1024];
-        String command;
-        String recvMessage;
         boolean status = false;
 
         final String JDBC_URL = String.format("jdbc:mysql://%s:%s/mail?serverTimezone=Asia/Seoul", mysqlServerIp, mysqlServerPort);
@@ -233,48 +230,33 @@ public class UserAdminAgent {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
-        
-        /*
-        Class.forName(jdbcDriver);
-
-        conn = DriverManager.getConnection(JDBC_URL, this.userName, this.pass);
-        String sql = "DELEE * FROM USERINFO WHERE";
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-
-        pstmt.setString(1, username);
-
-        pstmt.executeUpdate();
-
-        pstmt.close();
-        conn.close();
-        if (!isConnected) {
-            return status;
-        }*/
-
         try {
-            for (String userId : userList) {
-                // 1: "deluser" 명령 송신
-                command = "deluser " + userId + EOL;
-                os.write(command.getBytes());
-                log.debug(command);
+            for (int i = 0; i < userList.length; i++) {
+                Class.forName(jdbcDriver);
+                conn = DriverManager.getConnection(JDBC_URL, this.userName, this.pass);
+                String sql = "DELETE FROM userinfo WHERE userid = ? ";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
 
-                // 2: 응답 메시지 수신
-                java.util.Arrays.fill(messageBuffer, (byte) 0);
-                is.read(messageBuffer);
+                pstmt.setString(1, userList[i]);
 
-                // 3: 응답 메시지 분석
-                recvMessage = new String(messageBuffer);
-                log.debug("recvMessage = {}", recvMessage);
-                if (recvMessage.contains("deleted")) {
-                    status = true;
+                pstmt.executeUpdate();
+
+                status = true;
+
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
                 }
             }
-            quit();
+
         } catch (Exception ex) {
-            log.error("deleteUsers(): 예외 = {}", ex.getMessage());
-        } finally {
+            log.error("오류가 발생했습니다. (발생오류: {})", ex.getMessage());
             return status;
         }
+        return status;
+
     }  // deleteUsers()
 
     public boolean verify(String userid) {
