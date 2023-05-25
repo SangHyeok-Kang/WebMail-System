@@ -24,7 +24,6 @@
 
         <p> <a href="read_book"> 주소록 조회 </a> </p>
         <p> <a href="add_book"> 주소록 추가 </a> </p>
-        <p> <a href="search_book"> 주소록 수정 </a> </p>
         <p> <a href="del_book"> 주소록 삭제 </a> </p>
         <p><a href="login.do?menu=<%= CommandType.LOGOUT %>">로그아웃</a></p>
     </body>
