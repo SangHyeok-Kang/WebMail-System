@@ -23,13 +23,13 @@
             <h3>추가하시고자 하는 이메일, 이름, 전화번호를 작성 후,<br>
                 제출 버튼을 눌러주세요.
             </h3>
-            <form action="insert" method="POST">
+            <form action="insert.do" method="POST">
                 <table border="2" summary="addrbook">
                     <thead><th></th></thead>
                     <tbody>
                         <tr>
-                            <td>이름</td>
-                            <td><input type="text" name="name"/></td>
+                            <td >이름</td>
+                            <td scope="col"><input type="text" name="name"/></td>
                         </tr>
                         <tr>
                             <td>이메일</td>

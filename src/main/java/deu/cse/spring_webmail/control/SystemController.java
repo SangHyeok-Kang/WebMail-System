@@ -4,16 +4,13 @@
  */
 package deu.cse.spring_webmail.control;
 
+import deu.cse.spring_webmail.model.AddrbookAgent;
 import deu.cse.spring_webmail.model.Pop3Agent;
 import deu.cse.spring_webmail.model.UserAdminAgent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -357,7 +354,8 @@ public class SystemController {
     public String bookDel() {
         return "del_book";
     }
-    
+
+    /*
     @PostMapping("/insert")
     public String insertAddress(
             @RequestParam("name") String name,
@@ -394,7 +392,7 @@ public class SystemController {
         }
         return "redirect:read_book";
     }
-    
+     
     @PostMapping("/update")
     public String updateAddress(
             @RequestParam("email") String email,
@@ -434,7 +432,8 @@ public class SystemController {
         // 리디렉션할 페이지로 이동
         return "redirect:read_book";
     }
-    
+
+
     @PostMapping("/delete")
     public String deleteAddress(@RequestParam("email") String email, Model model, RedirectAttributes attrs) {
         try {
@@ -465,7 +464,8 @@ public class SystemController {
 
         return "del_book";
     }
-    
+
+
     @PostMapping("/search")
     public String searchBook(@RequestParam("email") String email, Model model) {
         try {
@@ -476,7 +476,8 @@ public class SystemController {
 
             Class.forName(JdbcDriver);
 
-            try (Connection conn = DriverManager.getConnection(JdbcUrl, User, Password); PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM addrbook WHERE email = ?")) {
+            try (Connection conn = DriverManager.getConnection(JdbcUrl, User, Password);
+                PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM addrbook WHERE email = ?")) {
 
                 pstmt.setString(1, email);
 
@@ -492,7 +493,7 @@ public class SystemController {
 
                     return "mod_book";
                 } else {
-                    
+
                 }
             }
         } catch (Exception ex) {
@@ -501,5 +502,127 @@ public class SystemController {
         }
 
         return "redirect:search_book";
+    }
+     */
+    @PostMapping("/insert.do")
+    public String insertAddrDo(
+            @RequestParam("email") String email,
+            @RequestParam("name") String name,
+            @RequestParam("phone") String phone,
+            @RequestParam("adder") String adder,
+            RedirectAttributes attrs) {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String pass = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
+        log.debug("insert.do: email = {}, name = {}, phone = {}, adder = {}, port = {}",
+                email, name, phone, adder, JAMES_CONTROL_PORT);
+
+        try {
+            String cwd = ctx.getRealPath(".");
+            AddrbookAgent agent = new AddrbookAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
+
+            if (agent.addAddrbookDB(email, name, phone, adder)) {
+                attrs.addFlashAttribute("msg", String.format("주소록 추가를 완료하였습니다."));
+            } else {
+                attrs.addFlashAttribute("msg", String.format("주소록 추가에 실패하였습니다."));
+            }
+        } catch (Exception ex) {
+            log.error("insert.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+        }
+
+        return "redirect:/read_book";
+    }
+
+    @PostMapping("/update.do")
+    public String updateAddrDo(
+            @RequestParam("email") String email,
+            @RequestParam("name") String name,
+            @RequestParam("phone") String phone,
+            RedirectAttributes attrs) {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String pass = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
+        log.debug("update.do: email = {}, name = {}, phone = {}, port = {}",
+                email, name, phone, JAMES_CONTROL_PORT);
+
+        try {
+            String cwd = ctx.getRealPath(".");
+            AddrbookAgent agent = new AddrbookAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
+
+            if (agent.updateAddrbookDB(email, name, phone)) {
+                attrs.addFlashAttribute("msg", String.format("주소록 수정을 완료하였습니다."));
+            } else {
+                attrs.addFlashAttribute("msg", String.format("주소록 수정에 실패하였습니다."));
+            }
+        } catch (Exception ex) {
+            log.error("update.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+        }
+
+        return "redirect:/search_book";
+    }
+
+    @PostMapping("/delete.do")
+    public String deleteAddrDo(
+            @RequestParam("email") String email,
+            RedirectAttributes attrs) {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String pass = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
+        log.debug("update.do: email = {}, port = {}",
+                email, JAMES_CONTROL_PORT);
+
+        try {
+            String cwd = ctx.getRealPath(".");
+            AddrbookAgent agent = new AddrbookAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
+
+            if (agent.deleteAddrbookDB(email)) {
+                attrs.addFlashAttribute("msg", String.format("주소록 삭제 완료하였습니다."));
+            } else {
+                attrs.addFlashAttribute("msg", String.format("주소록 삭제에 실패하였습니다."));
+            }
+        } catch (Exception ex) {
+            log.error("delete.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+        }
+
+        return "redirect:/del_book";
+    }
+
+    // 수정 중.
+    @GetMapping()
+    public String showAddrDo(
+            @RequestParam("email") String email,
+            Model model,
+            RedirectAttributes attrs) {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String pass = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+        
+        log.debug("update.do: email = {}, port = {}",
+                email, JAMES_CONTROL_PORT);
+        
+        try {
+            String cwd = ctx.getRealPath(".");
+            AddrbookAgent agent = new AddrbookAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
+
+            
+            
+            attrs.addFlashAttribute("msg", String.format("주소록 검색 완료하였습니다."));
+            
+        } catch (Exception ex) {
+            log.error("search.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+        }
+        
+        return "redirect:/mod_book";
     }
 }

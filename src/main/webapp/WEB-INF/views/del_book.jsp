@@ -31,7 +31,7 @@
             <table border="1" summary="addrbook">
                 <thead><th></th></thead>
                 <tbody>
-                <form action="delete" method="post">
+                <form action="delete.do" method="post">
                     <tr>
                         <td>이메일</td>
                         <td><input type="text" name="email" placeholder="이메일 입력" required></td>

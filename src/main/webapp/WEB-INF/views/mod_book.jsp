@@ -26,11 +26,13 @@
             <h3>검색된 주소록</h3>
             <table border="2" summary="addrbook">
                 <thead>
+                    <c:forEach items="${resultList}" var="row">
                     <tr>
                         <th>이름</th>
                         <th>이메일</th>
                         <th>전화번호</th>
                     </tr>
+                    </c:forEach>
                 </thead>
                 <tbody>
                     <tr>
@@ -49,7 +51,7 @@
                         <th>전화번호</th>
                     </tr>
                     <tr>
-                <form action="update" method="post">
+                <form action="update.do" method="post">
                     <input type="hidden" name="email" value="${email}"/>
                     <th><input type="text" name="name" value="${name}"/></th>
                     <th><input type="text" name="phone" value="${phone}"/></th>

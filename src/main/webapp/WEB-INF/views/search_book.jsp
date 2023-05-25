@@ -28,7 +28,7 @@
             <table border="1" summary="addrbook">
                 <thead><th></th></thead>
                 <tbody>
-                <form action="search" method="post">
+                <form action="search.do" method="post">
                     <tr>
                         <td>이메일</td>
                         <td><input type="text" name="email" placeholder="이메일 입력" required></td>
