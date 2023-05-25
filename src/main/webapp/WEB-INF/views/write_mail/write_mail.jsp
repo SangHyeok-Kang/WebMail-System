@@ -4,7 +4,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
+<%@ page session = "true" %>
 <!DOCTYPE html>
 
 <%-- @taglib  prefix="c" uri="http://java.sun.com/jsp/jstl/core" --%>
@@ -29,18 +29,19 @@
                 <table>
                     <tr>
                         <td> 수신 </td>
-                        <td> <input type="text" name="to" size="80"
+                        <td> <input type="text" id="to" name="to" size="80"
                                     value="${!empty param['sender'] ? param['sender'] : ''}"
-            <!--    value=<%=request.getParameter("recv") == null ? "" : request.getParameter("recv")%>  -->
+                                    <!--    value=<%=request.getParameter("recv") == null ? "" : request.getParameter("recv") %>  -->
+
                         </td>
                     </tr>
                     <tr>
                         <td>참조</td>
-                        <td> <input type="text" name="cc" size="80">  </td>
+                        <td> <input type="text" id="cc" name="cc" size="80">  </td>
                     </tr>
                     <tr>
                         <td> 메일 제목 </td>
-                        <td> <input type="text" name="subj" size="80" 
+                        <td> <input type="text" id="subj" name="subj" size="80" 
                                     value="${!empty param['sender'] ? "RE: " += sessionScope['subject'] : ''}" >  </td>
                     </tr>
                     <tr>
@@ -48,13 +49,14 @@
                     </tr>
                     <tr>  <%-- TextArea    --%>
                         <td colspan="2">
-                            <textarea rows="15" name="body" cols="80">${!empty param['sender'] ?
-"
+                            <textarea rows="15" id="body" name="body" cols="80">${!empty param['sender'] ?
+                                                                                  "
 
 
 
-----
-" += sessionScope['body'] : ''}</textarea> 
+                                                                                  ----
+                                                                                  " += sessionScope['body'] : ''}</textarea> 
+
                         </td>
                     </tr>
                     <tr>
@@ -64,10 +66,23 @@
                     <tr>
                         <td colspan="2">
                             <input type="submit" value="메일 보내기">
-                            <input type="reset" value="다시 입력">
+                            <input type="reset" value="다시 입력"> 
+                            <button type="button" onclick="doAction()">임시저장 및 뒤로가기</button>
+                            <script>
+                                function doAction() {                    
+                                    var subject = document.getElementById("subj").value;                                 
+                                    var body = document.getElementById("body").value;                          
+                                    var refer = document.getElementById("cc").value;          
+                                    
+                                    const link = 'save_temp_mail.do?refer=' + refer + '&subj=' + subject + '&body=' + body;
+                                    location.replace(link);
+                                }
+                            </script>
                         </td>
                     </tr>
                 </table>
+
+
             </form>
         </div>
 
