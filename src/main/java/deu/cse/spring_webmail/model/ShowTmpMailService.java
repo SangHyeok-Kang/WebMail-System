@@ -45,12 +45,12 @@ public class ShowTmpMailService {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
-
+        String sql;
         try {
             Class.forName(jdbcDriver);
 
             conn = DriverManager.getConnection(JDBC_URL, this.userName, this.password);
-            String sql = "SELECT * FROM tmp_mail WHERE userid ='" + user + "'";
+            sql = "SELECT * FROM tmp_mail WHERE userid ='" + user + "'";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
