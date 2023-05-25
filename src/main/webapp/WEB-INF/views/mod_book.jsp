@@ -36,9 +36,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>${name}</td>
-                        <td>${email}</td>
-                        <td>${phone}</td>
+                        <td>${row[0]}</td>
+                        <td>${row[0]}</td>
+                        <td>${row[0]}</td>
                     </tr>
                 </tbody>
             </table>

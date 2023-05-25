@@ -238,8 +238,8 @@ public class AddrbookAgent {
                 String phoneResult = rs.getString("phone");
 
                 List<String> row = new ArrayList<>();
-                row.add(emailResult);
                 row.add(nameResult);
+                row.add(emailResult);
                 row.add(phoneResult);
 
                 resultList.add(row);

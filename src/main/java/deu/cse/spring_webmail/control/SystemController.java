@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -606,23 +607,25 @@ public class SystemController {
         String userName = env.getProperty("spring.datasource.username");
         String pass = env.getProperty("spring.datasource.password");
         String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
-        
+
         log.debug("update.do: email = {}, port = {}",
                 email, JAMES_CONTROL_PORT);
-        
+
         try {
             String cwd = ctx.getRealPath(".");
             AddrbookAgent agent = new AddrbookAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
                     ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
 
-            
-            
+            ArrayList<List<String>> resultList = agent.searchAddrbookDB(email);
+
+            model.addAttribute("resultList", resultList);
+
             attrs.addFlashAttribute("msg", String.format("주소록 검색 완료하였습니다."));
-            
+
         } catch (Exception ex) {
             log.error("search.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
         }
-        
+
         return "redirect:/mod_book";
     }
 }
