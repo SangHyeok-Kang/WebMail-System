@@ -23,21 +23,26 @@
             <jsp:include page="../sidebar_previous_menu.jsp" />
         </div>
 
-        <div id="main">
-            <%-- <jsp:include page="mail_send_form.jsp" /> --%>
+        <div id="main">        
             <form enctype="multipart/form-data" method="POST" action="write_mail.do" >
-                <table>
-                    <caption>임시 메일 작성 화면</caption>
+                <table>   
+                    <caption style="color: rgba( 255, 255, 255, 0 );">임시 메일 작성 화면</caption>
+                   <tr>
+                        <th colspan="2" style="background-color: rgba( 255, 255, 255, 0 ); border: 0px">
+                            
+                        </th>
+                    </tr>
+                 
                     <tr>
-                        <td> 수신 </td>
+                        <th scope="col"> 수신 </th>
                         <td> <input type="text" name="to" size="80"> </td>
                     </tr>
                     <tr>
-                        <td>참조</td>
+                        <th scope="col">참조</th>
                         <td> <input type="text" name="cc" size="80" value="${refer}">  </td>
                     </tr>
                     <tr>
-                        <td> 메일 제목 </td>
+                        <th scope="col"> 메일 제목 </th>
                         <td> <input type="text" name="subj" size="80" 
                                     value="${subj}" > </td>
                     </tr>
@@ -50,7 +55,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>첨부 파일</td>
+                        <th scope="col">첨부 파일</th>
                         <td> <input type="file" name="file1"  size="80">  </td>
                     </tr>
                     <tr>
@@ -62,7 +67,6 @@
                 </table>
             </form>
         </div>
-
         <%@include file="../footer.jspf"%>
     </body>
 </html>
