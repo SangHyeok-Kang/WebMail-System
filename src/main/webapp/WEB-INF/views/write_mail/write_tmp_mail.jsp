@@ -10,7 +10,7 @@
 <%-- @taglib  prefix="c" uri="http://java.sun.com/jsp/jstl/core" --%>
 
 
-<html>
+<html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>메일 쓰기 화면</title>
@@ -27,6 +27,7 @@
             <%-- <jsp:include page="mail_send_form.jsp" /> --%>
             <form enctype="multipart/form-data" method="POST" action="write_mail.do" >
                 <table>
+                    <caption>임시 메일 작성 화면</caption>
                     <tr>
                         <td> 수신 </td>
                         <td> <input type="text" name="to" size="80"> </td>
