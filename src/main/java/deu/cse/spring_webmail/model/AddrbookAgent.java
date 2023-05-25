@@ -72,53 +72,8 @@ public class AddrbookAgent {
             log.error("UserAdminAgent 생성자 예외: {}", e.getMessage());
         }
 
-        isConnected = connect();
+        //isConnected = connect();
     }
-
-    private boolean connect() {
-        byte[] messageBuffer = new byte[1024];
-        boolean returnVal = false;
-        String sendMessage;
-        String recvMessage;
-
-        log.info("connect() : root.id = {}, root.password = {}", ROOT_ID, ROOT_PASSWORD);
-
-        // root 인증: id, passwd - default: root
-        // 1: Login Id message 수신
-        try {
-            is.read(messageBuffer);
-            recvMessage = new String(messageBuffer);
-
-            // 2: rootId 송신
-            sendMessage = ROOT_ID + EOL;
-            os.write(sendMessage.getBytes());
-
-            // 3: Password message 수신
-            java.util.Arrays.fill(messageBuffer, (byte) 0);
-            is.read(messageBuffer);
-            recvMessage = new String(messageBuffer);
-
-            // 4: rootPassword 송신
-            sendMessage = ROOT_PASSWORD + EOL;
-            os.write(sendMessage.getBytes());
-
-            // 5: welcome message 수신
-            java.util.Arrays.fill(messageBuffer, (byte) 0);
-            // if (is.available() > 0) {
-            is.read(messageBuffer);
-            recvMessage = new String(messageBuffer);
-
-            if (recvMessage.contains("Welcome")) {
-                returnVal = true;
-            } else {
-                returnVal = false;
-            }
-        } catch (Exception e) {
-            log.error("connect() 예외: {}", e.getMessage());
-        }
-
-        return returnVal;
-    }  // connect()
 
     public boolean addAddrbookDB(String email, String name, String phone, String adder) {
         final String JDBC_URL = String.format("jdbc:mysql://%s:%s/mail?serverTimezone=Asia/Seoul", mysqlServerIp, mysqlServerPort);
