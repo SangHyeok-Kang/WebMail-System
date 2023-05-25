@@ -10,6 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -22,6 +27,12 @@ import org.springframework.beans.factory.annotation.Value;
  */
 @Slf4j
 public class UserAdminAgent {
+
+    private String mysqlServerIp;
+    private String mysqlServerPort;
+    private String userName;
+    private String pass;
+    private String jdbcDriver;
 
     private String server;
     private int port;
@@ -40,7 +51,8 @@ public class UserAdminAgent {
     }
 
     public UserAdminAgent(String server, int port, String cwd,
-            String root_id, String root_pass, String admin_id) {
+            String root_id, String root_pass, String admin_id,
+            String mysqlServerIp, String mysqlServerPort, String userName, String pass, String jdbcDriver) {
         log.debug("UserAdminAgent created: server = " + server + ", port = " + port);
         this.server = server;  // 127.0.0.1
         this.port = port;  // 4555
@@ -48,8 +60,13 @@ public class UserAdminAgent {
         this.ROOT_ID = root_id;
         this.ROOT_PASSWORD = root_pass;
         this.ADMIN_ID = admin_id;
-
+        this.mysqlServerIp = mysqlServerIp;
+        this.mysqlServerPort = mysqlServerPort;
+        this.userName = userName;
+        this.pass = pass;
+        this.jdbcDriver = jdbcDriver;
         log.debug("isConnected = {}, root.id = {}", isConnected, ROOT_ID);
+        log.debug("UserAdminAgent(): mysqlServerIp = {}, jdbvDriver = {}", mysqlServerIp, jdbcDriver);
 
         try {
             socket = new Socket(server, port);
@@ -95,6 +112,7 @@ public class UserAdminAgent {
             //}
             // 3: 기존 메일사용자 여부 확인
             if (recvMessage.contains("added")) {
+
                 status = true;
             } else {
                 status = false;
@@ -111,6 +129,38 @@ public class UserAdminAgent {
             return status;
         }
     }  // addUser()
+
+    public boolean addUserDB(String username, String userId, String password) {
+        final String JDBC_URL = String.format("jdbc:mysql://%s:%s/mail?serverTimezone=Asia/Seoul", mysqlServerIp, mysqlServerPort);
+
+        log.debug("JDBC_URL = {}", JDBC_URL);
+
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName(jdbcDriver);
+
+            conn = DriverManager.getConnection(JDBC_URL, this.userName, this.pass);
+            String sql = "INSERT INTO userinfo VALUES(?,?,?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, username);
+            pstmt.setString(2, userId);
+            pstmt.setString(3, password);
+
+            pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+
+            return true;
+
+        } catch (Exception ex) {
+            log.error("오류가 발생했습니다. (발생오류: {})", ex.getMessage());
+            return false;
+        }
+    }
 
     public List<String> getUserList() {
         List<String> userList = new LinkedList<String>();
@@ -171,39 +221,42 @@ public class UserAdminAgent {
     } // parseUserList()
 
     public boolean deleteUsers(String[] userList) {
-        byte[] messageBuffer = new byte[1024];
-        String command;
-        String recvMessage;
         boolean status = false;
 
-        if (!isConnected) {
-            return status;
-        }
+        final String JDBC_URL = String.format("jdbc:mysql://%s:%s/mail?serverTimezone=Asia/Seoul", mysqlServerIp, mysqlServerPort);
 
+        log.debug("JDBC_URL = {}", JDBC_URL);
+
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            for (String userId : userList) {
-                // 1: "deluser" 명령 송신
-                command = "deluser " + userId + EOL;
-                os.write(command.getBytes());
-                log.debug(command);
+            for (int i = 0; i < userList.length; i++) {
+                Class.forName(jdbcDriver);
+                conn = DriverManager.getConnection(JDBC_URL, this.userName, this.pass);
+                String sql = "DELETE FROM userinfo WHERE userid = ? ";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
 
-                // 2: 응답 메시지 수신
-                java.util.Arrays.fill(messageBuffer, (byte) 0);
-                is.read(messageBuffer);
+                pstmt.setString(1, userList[i]);
 
-                // 3: 응답 메시지 분석
-                recvMessage = new String(messageBuffer);
-                log.debug("recvMessage = {}", recvMessage);
-                if (recvMessage.contains("deleted")) {
-                    status = true;
+                pstmt.executeUpdate();
+
+                status = true;
+
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
                 }
             }
-            quit();
+
         } catch (Exception ex) {
-            log.error("deleteUsers(): 예외 = {}", ex.getMessage());
-        } finally {
+            log.error("오류가 발생했습니다. (발생오류: {})", ex.getMessage());
             return status;
         }
+        return status;
+
     }  // deleteUsers()
 
     public boolean verify(String userid) {
@@ -302,4 +355,5 @@ public class UserAdminAgent {
             return status;
         }
     }
+
 }

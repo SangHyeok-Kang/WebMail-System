@@ -8,7 +8,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 */
 
 
-root { 
+root {
     display: block;
 }
 
@@ -27,7 +27,28 @@ td, th {
     text-align: center;
     padding: 5px;
 }
+.hidden {
+    display: none;
+}
+.page-link {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 5px;
+    background-color: #f2f2f2;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
+.page-link:hover {
+    background-color: gray;
+}
+
+.page-link.active {
+    background-color: #337ab7;
+    color: #fff;
+}
 th {
     background-color:  gray;
     color: white;
@@ -67,6 +88,14 @@ td#subject {
     line-height: 200%;
     /* border: red ridge medium; */
 }
+#session_timeout {
+    color: fuchsia;
+    margin: 100px 200px 100px 200px;
+    padding: 50px;
+    line-height: 200%;
+    /* border: red ridge medium; */
+}
+
 
 #sidebar {
     margin: 20px 10px 10px 10px;
@@ -79,6 +108,21 @@ td#subject {
     margin-top: 50px;
     margin-left: 190px;
     text-align: left;
+}
+#mailTable{
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+
+#signup_main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 30vh; /* 화면 전체 높이를 기준으로 중앙에 위치 */
 }
 
 #addrbook, #msgBody {

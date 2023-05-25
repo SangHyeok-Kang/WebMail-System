@@ -3,6 +3,7 @@
     Author     : jongmin
 --%>
 
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="deu.cse.spring_webmail.control.CommandType" %>
 
@@ -15,8 +16,8 @@
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
     </head>
     <body>
-        <jsp:include page="../header.jspf" />
-
+        
+        <%@include file="../header.jspf"%>
         <div id="sidebar">
             <jsp:include page="sidebar_admin_previous_menu.jsp" />
         </div>
@@ -26,6 +27,10 @@
 
             <form name="AddUser" action="add_user.do" method="POST">
                 <table border="0" align="left">
+                    <tr>
+                        <td>이름 </td>
+                        <td> <input type="text" name="username" value="" /> </td>
+                    </tr>
                     <tr>
                         <td>사용자 ID</td>
                         <td> <input type="text" name="id" value="" size="20" />  </td>

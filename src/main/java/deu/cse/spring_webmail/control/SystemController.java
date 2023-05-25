@@ -4,13 +4,17 @@
  */
 package deu.cse.spring_webmail.control;
 
+import deu.cse.spring_webmail.model.AddrbookAgent;
 import deu.cse.spring_webmail.model.Pop3Agent;
 import deu.cse.spring_webmail.model.UserAdminAgent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +42,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @PropertySource("classpath:/system.properties")
+@PropertySource("classpath:/config.properties")
 @Slf4j
 public class SystemController {
 
@@ -46,6 +52,13 @@ public class SystemController {
     private HttpSession session;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private Environment env;
+
+    @Value("${mysql.server.ip}")
+    private String mysqlServerIp;
+    @Value("${mysql.server.port}")
+    private String mysqlServerPort;
 
     @Value("${root.id}")
     private String ROOT_ID;
@@ -117,6 +130,11 @@ public class SystemController {
         return "login_fail";
     }
 
+    @GetMapping("/session_timeout")
+    public String sessionTimeOut() {
+        return "session_timeout";
+    }
+
     protected boolean isAdmin(String userid) {
         boolean status = false;
 
@@ -129,18 +147,40 @@ public class SystemController {
 
     @GetMapping("/main_menu")
     public String mainmenu(Model model) {
+
         Pop3Agent pop3 = new Pop3Agent();
         pop3.setHost((String) session.getAttribute("host"));
         pop3.setUserid((String) session.getAttribute("userid"));
         pop3.setPassword((String) session.getAttribute("password"));
 
+        String messageList_c = "";
+
         String messageList = pop3.getMessageList();
+        messageList = messageList.replace("<table>", "<table id=\"mailTable\">");
+
+        String patt = "^(\\d+)";
+        Pattern pattern = Pattern.compile(patt);
+        Matcher matcher = pattern.matcher(messageList);
+        if (matcher.find()) {
+            messageList_c = matcher.group();
+            messageList = messageList.replaceAll(patt, "");
+            
+        }
+                
+        int count = Integer.parseInt(messageList_c) / 5;
+        
+        if(Integer.parseInt(messageList_c) % 5 > 0)
+            count++;
+           
+        log.info("메시지리스트 갸수 = {}", count);
+        model.addAttribute("messageList_c", count);
         model.addAttribute("messageList", messageList);
         return "main_menu";
     }
 
     @GetMapping("/admin_menu")
     public String adminMenu(Model model) {
+
         log.debug("root.id = {}, root.password = {}, admin.id = {}",
                 ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
 
@@ -148,25 +188,65 @@ public class SystemController {
         return "admin/admin_menu";
     }
 
+    @GetMapping("/signup")
+    public String signup() {
+        return "signup";
+    }
+
+    @PostMapping("/signup_user.do")
+    public String signupUserDo(@RequestParam String username, @RequestParam String id, @RequestParam String password,
+            RedirectAttributes attrs) {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String pass = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
+        log.debug("signup_user.do: id = {}, password = {}, port = {}",
+                id, password, JAMES_CONTROL_PORT);
+
+        try {
+            String cwd = ctx.getRealPath(".");
+            UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
+            // if (addUser successful)  사용자 등록 성공 팦업창
+            // else 사용자 등록 실패 팝업창
+            if ( agent.addUserDB(username, id, password) && agent.addUser(id, password)) {
+                attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 성공하였습니다.", id));
+            } else {
+                attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 실패하였습니다.", id));
+            }
+        } catch (Exception ex) {
+            log.error("signup_user.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+        }
+
+        return "redirect:/";
+    }
+
     @GetMapping("/add_user")
     public String addUser() {
+
         return "admin/add_user";
     }
 
     @PostMapping("/add_user.do")
-    public String addUserDo(@RequestParam String id, @RequestParam String password,
+    public String addUserDo(@RequestParam String username, @RequestParam String id, @RequestParam String password,
             RedirectAttributes attrs) {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String pass = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
         log.debug("add_user.do: id = {}, password = {}, port = {}",
                 id, password, JAMES_CONTROL_PORT);
 
         try {
             String cwd = ctx.getRealPath(".");
             UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
-                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
 
             // if (addUser successful)  사용자 등록 성공 팦업창
             // else 사용자 등록 실패 팝업창
-            if (agent.addUser(id, password)) {
+            if ( agent.addUserDB(username, id, password) && agent.addUser(id, password)) {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 성공하였습니다.", id));
             } else {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 실패하였습니다.", id));
@@ -193,12 +273,17 @@ public class SystemController {
      */
     @PostMapping("delete_user.do")
     public String deleteUserDo(@RequestParam String[] selectedUsers, RedirectAttributes attrs) {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String pass = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
         log.debug("delete_user.do: selectedUser = {}", List.of(selectedUsers));
 
         try {
             String cwd = ctx.getRealPath(".");
             UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
-                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
+                    ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
             agent.deleteUsers(selectedUsers);  // 수정!!!
         } catch (Exception ex) {
             log.error("delete_user.do : 예외 = {}", ex);
@@ -208,9 +293,14 @@ public class SystemController {
     }
 
     private List<String> getUserList() {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String pass = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
         String cwd = ctx.getRealPath(".");
         UserAdminAgent agent = new UserAdminAgent(JAMES_HOST, JAMES_CONTROL_PORT, cwd,
-                ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR);
+                ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
         List<String> userList = agent.getUserList();
         log.debug("userList = {}", userList);
 
@@ -226,9 +316,9 @@ public class SystemController {
 
     /**
      * https://34codefactory.wordpress.com/2019/06/16/how-to-display-image-in-jsp-using-spring-code-factory/
-     * 
+     *
      * @param imageName
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/get_image/{imageName}")
     @ResponseBody
@@ -248,7 +338,7 @@ public class SystemController {
         byte[] imageInByte;
         try {
             byteArrayOutputStream = new ByteArrayOutputStream();
-            bufferedImage = ImageIO.read(new File(folderPath + File.separator + imageName) );
+            bufferedImage = ImageIO.read(new File(folderPath + File.separator + imageName));
             String format = imageName.substring(imageName.lastIndexOf(".") + 1);
             ImageIO.write(bufferedImage, format, byteArrayOutputStream);
             byteArrayOutputStream.flush();
@@ -261,6 +351,85 @@ public class SystemController {
             log.error("getImageBytes 예외: {}", e.getMessage());
         }
         return null;
+    }
+
+    @GetMapping("read_book")
+    public String bookRead() {
+        return "read_book";
+    }
+
+    @GetMapping("add_book")
+    public String bookAdd() {
+        return "add_book";
+    }
+
+    @GetMapping("search_book")
+    public String bookMod() {
+        return "search_book";
+    }
+
+    @GetMapping("mod_book")
+    public String bookMod2() {
+        return "mod_book";
+    }
+
+    @GetMapping("del_book")
+    public String bookDel() {
+        return "del_book";
+    }
+
+    @PostMapping("/insert.do")
+    public String insertAddrDo(
+            @RequestParam("email") String email,
+            @RequestParam("name") String name,
+            @RequestParam("phone") String phone,
+            @RequestParam("adder") String adder,
+            RedirectAttributes attrs) {
+        String urls = "";
+        String userName = env.getProperty("spring.datasource.username");
+        String password = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
+        log.debug("insert.do: email = {}, name = {}, phone = {}, adder = {}, port = {}",
+                email, name, phone, adder, JAMES_CONTROL_PORT);
+
+        try {
+            String cwd = ctx.getRealPath(".");
+            AddrbookAgent agent = new AddrbookAgent(mysqlServerIp, mysqlServerPort, userName, password, jdbcDriver);
+            boolean result = agent.addAddrbookDB(email, name, phone, adder);
+            
+            if (result == true) {
+                attrs.addFlashAttribute("msg", String.format("주소록 추가를 완료하였습니다."));
+            } else {
+                attrs.addFlashAttribute("msg", String.format("주소록 추가에 실패하였습니다."));
+            }
+        } catch (Exception ex) {
+            log.error("insert.do: 시스템 접속에 실패했습니다. 예외 = {}", ex.getMessage());
+        }
+
+        return "redirect:/read_book";
+    }
+
+    @PostMapping("/delete.do")
+    public String deleteAddrDo(
+            @RequestParam("email") String email,
+            RedirectAttributes attrs) {
+        String userid = (String) session.getAttribute("userid");
+        String userName = env.getProperty("spring.datasource.username");
+        String password = env.getProperty("spring.datasource.password");
+        String jdbcDriver = env.getProperty("spring.datasource.driver-class-name");
+
+        AddrbookAgent agent = new AddrbookAgent(mysqlServerIp, mysqlServerPort, userName, password, jdbcDriver);
+
+        boolean result = agent.deleteAddrbookDB(email, userid);
+
+        if (result == true) {
+            attrs.addFlashAttribute("msg", String.format("주소록 삭제 완료하였습니다."));
+        } else {
+            attrs.addFlashAttribute("msg", String.format("주소록 삭제에 실패하였습니다."));
+        }
+
+        return "redirect:/del_book";
     }
 
 }

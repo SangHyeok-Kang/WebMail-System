@@ -7,7 +7,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
-<html>
+
+
+
+<html lang="ko">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>로그인 실패</title>
@@ -22,10 +25,11 @@
 
         <%@include file="header.jspf"%>
 
-        <p id="session_timeout">
-            로그인이 실패하였습니다. <br>
+        <p id="login_fail">
 
-            올바른 사용자 ID와 암호를 사용하여 로그인하시기 바랍니다. <br>
+            세션이 만료되어 접근 권한이 없습니다. <br>
+
+            다시 로그인하시기 바랍니다. <br>
 
             5초 뒤 자동으로 초기 화면으로 돌아갑니다.
 
