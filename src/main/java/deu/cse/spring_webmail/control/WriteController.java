@@ -53,8 +53,7 @@ public class WriteController {
     @Value("${file.max_size}")
     private String MAX_SIZE;
 
-    @Autowired
-    private ServletContext ctx;
+
     @Autowired
     private HttpSession session;
 
@@ -83,9 +82,9 @@ public class WriteController {
         // FormParser 클래스의 기능은 매개변수로 모두 넘어오므로 더이상 필요 없음.
         // 업로드한 파일이 있으면 해당 파일을 UPLOAD_FOLDER에 저장해 주면 됨.
         if (!"".equals(upFile.getOriginalFilename())) {
-            String basePath = ctx.getRealPath(UPLOAD_FOLDER);
-            log.debug("{} 파일을 {} 폴더에 저장...", upFile.getOriginalFilename(), basePath);
-            File f = new File(basePath + File.separator + upFile.getOriginalFilename());
+            
+            log.debug("{} 파일을 {} 폴더에 저장...", upFile.getOriginalFilename(), UPLOAD_FOLDER);
+            File f = new File(UPLOAD_FOLDER + File.separator + upFile.getOriginalFilename());
             try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(f))) {
                 bos.write(upFile.getBytes());
             } catch (IOException e) {
@@ -158,7 +157,9 @@ public class WriteController {
 
         if (fileName != null && !"".equals(fileName)) {
             log.debug("sendMessage: 파일({}) 첨부 필요", fileName);
-            File f = new File(ctx.getRealPath(UPLOAD_FOLDER) + File.separator + fileName);
+            
+            File f = new File(UPLOAD_FOLDER + fileName);
+
             agent.setFile1(f.getAbsolutePath());
         }
 

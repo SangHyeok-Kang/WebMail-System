@@ -31,7 +31,7 @@ public class MessageFormatter {
         StringBuilder buffer = new StringBuilder();
 
         // 메시지 제목 보여주기
-        buffer.append("<table>");  // table start
+        buffer.append("<table id = \"mailTable\">");  // table start
         buffer.append("<tr> "
                 + " <th> No. </td> "
                 + " <th> 보낸 사람 </td>"
@@ -39,7 +39,6 @@ public class MessageFormatter {
                 + " <th> 보낸 날짜 </td>   "
                 + " <th> 삭제 </td>   "
                 + " </tr>");
-
         for (int i = messages.length - 1; i >= 0; i--) {
             MessageParser parser = new MessageParser(messages[i], userid);
             parser.parse(false);  // envelope 정보만 필요
