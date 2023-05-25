@@ -16,7 +16,15 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
+
 /**
  *
  * @author joon
@@ -25,14 +33,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JasyptConfig {
 
-  @Bean("jasyptStringEncryptor")
+    @Bean("jasyptStringEncryptor")
     public StringEncryptor stringEncryptor() throws FileNotFoundException, IOException {
 
         log.debug("config is 호출");
-        BufferedReader br = new BufferedReader(new FileReader("./key.txt"));
-        String key = br.readLine();
-        br.close();
-       
+//        BufferedReader br = new BufferedReader(new FileReader("./key.txt"));
+//        String key = br.readLine();
+//        br.close();
+//       
+        ClassPathResource resource = new ClassPathResource("key.txt");
+        byte[] bdata = FileCopyUtils.copyToByteArray(resource.getInputStream());
+        String key = new String(bdata, StandardCharsets.UTF_8); 
+//        Path path = Paths.get(resource.getURI());
+//        String key = Files.readString(path);
+
+        log.debug("[TEST] key : {}", key);
         //key 암호화  
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
