@@ -10,7 +10,7 @@
         <link type="text/css" rel="stylesheet" href="css/main_style.css" />
         <title><%=session.getAttribute("userid")%>님의 주소록 삭제</title>
     </head>
-    
+
     <c:if test="${not empty msg}">
         <script>
             var message = "${msg}";
@@ -28,24 +28,25 @@
         <div id="main">
 
             <h3>삭제하시고자 하는 이메일을 작성 후, 삭제 버튼을 눌러주세요.</h3>
-            <table border="1" summary="addrbook">
-                <thead><th></th></thead>
-                <tbody>
-                <form action="delete.do" method="post">
-                    <tr>
-                        <td>이메일</td>
-                        <td><input type="text" name="email" placeholder="이메일 입력" required></td>
-                        <td><input type="submit" value="삭제" /></td>
-                    </tr>
-                </form>
-                </tbody>
-            </table>
+
 
             <c:catch var="errorReason">
                 <mytags:addrbook user="root" password="1q2w3e4r" schema="mail" table="addrbook" />
             </c:catch>
             ${empty errorReason ? "<noerror/>" : errorReason}
-
+            <br><br>
+            <form action="delete.do" method="post">
+                <table border="1" summary="addrbook">
+                    <thead><th colspan="3">삭제할 이메일 입력</th></thead>
+                    <tbody>
+                        <tr>
+                            <td>이메일</td>
+                            <td><input type="text" name="email" placeholder="이메일 입력" required></td>
+                            <td><input type="submit" value="삭제" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         </div>
         <%@include file="footer.jspf"%>
     </body>

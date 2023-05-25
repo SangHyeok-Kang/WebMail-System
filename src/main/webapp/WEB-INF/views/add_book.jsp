@@ -25,20 +25,23 @@
             </h3>
             <form action="insert.do" method="POST">
                 <table border="2" summary="addrbook">
-                    <thead><th></th></thead>
+                    <tr>
+                        <th scope = "col" colspan="2" style="background-color: rgba( 255, 255, 255, 0 ); border: 0px">    
+                        </th>
+                    </tr>
                     <tbody>
                         <tr>
                             <td >이름</td>
-                            <td scope="col"><input type="text" name="name"/></td>
+                            <td scope="col"><input type="text" name="name" required/></td>
                         </tr>
                         <tr>
                             <td>이메일</td>
-                            <td><input type="text" name="email"/></td>
+                            <td><input type="text" name="email" required/></td>
                         </tr>
                         <tr>
                             <td>전화번호</td>
                             <td>
-                                <input type="text" name="phone"/>
+                                <input type="text" name="phone" required/>
                                 <input type="hidden" name="adder" value=<%=session.getAttribute("userid")%>>
                             </td>
                         </tr>

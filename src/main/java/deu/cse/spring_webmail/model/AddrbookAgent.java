@@ -26,7 +26,7 @@ public class AddrbookAgent {
     private String mysqlServerIp;
     private String mysqlServerPort;
     private String userName;
-    private String pass;
+    private String password;
     private String jdbcDriver;
 
     private String server;
@@ -46,32 +46,21 @@ public class AddrbookAgent {
 
     }
 
-    public AddrbookAgent(String server, int port, String cwd,
-            String root_id, String root_pass, String admin_id,
-            String mysqlServerIp, String mysqlServerPort, String userName, String pass, String jdbcDriver) {
-        log.debug("UserAdminAgent created: server = " + server + ", port = " + port);
-        this.server = server;  // 127.0.0.1
-        this.port = port;  // 4555
-        this.cwd = cwd;
-        this.ROOT_ID = root_id;
-        this.ROOT_PASSWORD = root_pass;
-        this.ADMIN_ID = admin_id;
+    public AddrbookAgent(String mysqlServerIp, String mysqlServerPort, String userName, String password, String jdbcDriver) {
         this.mysqlServerIp = mysqlServerIp;
         this.mysqlServerPort = mysqlServerPort;
         this.userName = userName;
-        this.pass = pass;
+        this.password = password;
         this.jdbcDriver = jdbcDriver;
-        log.debug("isConnected = {}, root.id = {}", isConnected, ROOT_ID);
-        log.debug("UserAdminAgent(): mysqlServerIp = {}, jdbvDriver = {}", mysqlServerIp, jdbcDriver);
+        log.debug("AddrbookAgent(): mysqlServerIp = {}, jdbvDriver = {}", mysqlServerIp, jdbcDriver);
 
-        try {
+        /*try {
             socket = new Socket(server, port);
             is = socket.getInputStream();
             os = socket.getOutputStream();
         } catch (Exception e) {
             log.error("UserAdminAgent 생성자 예외: {}", e.getMessage());
-        }
-
+        }*/
         //isConnected = connect();
     }
 
@@ -83,32 +72,59 @@ public class AddrbookAgent {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
-        try {
-            Class.forName(jdbcDriver);
+        String sql;
 
-            conn = DriverManager.getConnection(JDBC_URL, this.userName, this.pass);
-            String sql = "INSERT INTO addrbook VALUES(?,?,?,?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-
-            pstmt.setString(1, email);
-            pstmt.setString(2, name);
-            pstmt.setString(3, phone);
-            pstmt.setString(4, adder);
-
-            pstmt.executeUpdate();
-
-            pstmt.close();
-            conn.close();
-
-            return true;
-
-        } catch (Exception ex) {
-            log.error("오류가 발생했습니다. (발생오류: {})", ex.getMessage());
+        if (email.equals(adder)) {
             return false;
+        } else {
+            try {
+                Class.forName(jdbcDriver);
+
+                conn = DriverManager.getConnection(JDBC_URL, this.userName, this.password);
+                sql = "SELECT * FROM userinfo where userid = '" + email + "' and username = '" + name + "'";
+                stmt = conn.createStatement();
+                rs = stmt.executeQuery(sql);
+                if (rs.next()) {
+
+                    rs.close();
+                    stmt.close();
+
+                    sql = "SELECT * FROM addrbook WHERE email = '" + email + "' and adder = '" + adder + "'";
+                    System.out.println(sql);
+                    stmt = conn.createStatement();
+                    rs = stmt.executeQuery(sql);
+                    if (rs.next()) {
+                        return false;
+                    } else {
+                        stmt = conn.createStatement();
+                        rs = stmt.executeQuery(sql);
+                        sql = "INSERT INTO addrbook VALUES(?,?,?,?)";
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+                        pstmt.setString(1, email);
+                        pstmt.setString(2, name);
+                        pstmt.setString(3, phone);
+                        pstmt.setString(4, adder);
+
+                        pstmt.executeUpdate();
+
+                        pstmt.close();
+                        conn.close();
+
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+
+            } catch (Exception ex) {
+                log.error("오류가 발생했습니다. (발생오류: {})", ex.getMessage());
+                return false;
+            }
         }
     }
 
-    public boolean updateAddrbookDB(String email, String name, String phone) {
+    public boolean deleteAddrbookDB(String email, String userid) {
         final String JDBC_URL = String.format("jdbc:mysql://%s:%s/mail?serverTimezone=Asia/Seoul", mysqlServerIp, mysqlServerPort);
 
         log.debug("JDBC_URL = {}", JDBC_URL);
@@ -116,98 +132,37 @@ public class AddrbookAgent {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
+        String sql;
         try {
+
             Class.forName(jdbcDriver);
 
-            conn = DriverManager.getConnection(JDBC_URL, this.userName, this.pass);
-            String sql = "UPDATE addrbook SET name = ?, phone = ? WHERE email = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-
-            pstmt.setString(1, name);
-            pstmt.setString(2, phone);
-            pstmt.setString(3, email);
-
-            pstmt.executeUpdate();
-
-            pstmt.close();
-            conn.close();
-
-            return true;
-
-        } catch (Exception ex) {
-            log.error("오류가 발생했습니다. (발생오류: {})", ex.getMessage());
-            return false;
-        }
-    }
-
-    public boolean deleteAddrbookDB(String email) {
-        final String JDBC_URL = String.format("jdbc:mysql://%s:%s/mail?serverTimezone=Asia/Seoul", mysqlServerIp, mysqlServerPort);
-
-        log.debug("JDBC_URL = {}", JDBC_URL);
-
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            Class.forName(jdbcDriver);
-
-            conn = DriverManager.getConnection(JDBC_URL, this.userName, this.pass);
-            String sql = "DELETE FROM addrbook WHERE email = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-
-            pstmt.setString(1, email);
-
-            pstmt.executeUpdate();
-
-            pstmt.close();
-            conn.close();
-
-            return true;
-
-        } catch (Exception ex) {
-            log.error("오류가 발생했습니다. (발생오류: {})", ex.getMessage());
-            return false;
-        }
-    }
-
-    public ArrayList<List<String>> searchAddrbookDB(String email) {
-        final String JDBC_URL = String.format("jdbc:mysql://%s:%s/mail?serverTimezone=Asia/Seoul", mysqlServerIp, mysqlServerPort);
-
-        log.debug("JDBC_URL = {}", JDBC_URL);
-
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        ArrayList<List<String>> resultList = new ArrayList<>();
-        try {
-            Class.forName(jdbcDriver);
-
-            conn = DriverManager.getConnection(JDBC_URL, this.userName, this.pass);
-            String sql = "SELECT * FROM addrbook WHERE email = ?";
+            conn = DriverManager.getConnection(JDBC_URL, this.userName, this.password);
+            sql = "SELECT * FROM addrbook WHERE email = '" + email + "' and adder = '" + userid + "'";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
 
-            while (rs.next()) {
-                String emailResult = rs.getString("email");
-                String nameResult = rs.getString("name");
-                String phoneResult = rs.getString("phone");
+            if (rs.next()) {
+                sql = "DELETE FROM addrbook WHERE email = ? and adder = ?";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
 
-                List<String> row = new ArrayList<>();
-                row.add(nameResult);
-                row.add(emailResult);
-                row.add(phoneResult);
+                pstmt.setString(1, email);
+                pstmt.setString(2, userid);
 
-                resultList.add(row);
+                pstmt.executeUpdate();
+
+                pstmt.close();
+                conn.close();
+
+            } else {
+                return false;
             }
-
-            rs.close();
-            stmt.close();
-            conn.close();
 
         } catch (Exception ex) {
             log.error("오류가 발생했습니다. (발생오류: {})", ex.getMessage());
-
+            return false;
         }
-        return resultList;
+        return true;
     }
+
 }
