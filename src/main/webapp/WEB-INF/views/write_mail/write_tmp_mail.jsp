@@ -28,7 +28,7 @@
                 <table>   
                     <caption style="color: rgba( 255, 255, 255, 0 );">임시 메일 작성 화면</caption>
                    <tr>
-                        <th colspan="2" style="background-color: rgba( 255, 255, 255, 0 ); border: 0px">
+                        <th scope = "col" colspan="2" style="background-color: rgba( 255, 255, 255, 0 ); border: 0px">
                             
                         </th>
                     </tr>
