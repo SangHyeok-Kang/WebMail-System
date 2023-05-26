@@ -63,6 +63,7 @@ public class MessageFormatter {
     }
 
     public String getMessage(Message message) {
+          log.debug("포매터 진입");
         StringBuilder buffer = new StringBuilder();
 
         // MessageParser parser = new MessageParser(message, userid);
@@ -82,6 +83,7 @@ public class MessageFormatter {
         buffer.append(parser.getBody());
 
         String attachedFile = parser.getFileName();
+        log.debug("attachedFile : " + attachedFile);
         if (attachedFile != null) {
             buffer.append("<br> <hr> 첨부파일: <a href=download"
                     + "?userid=" + this.userid

@@ -115,12 +115,14 @@ public class Pop3Agent {
 
         try {
             // 메일 폴더 열기
+            log.debug("진입a");
             Folder folder = store.getFolder("INBOX");  // 3.2
+            log.debug("진입b");
             folder.open(Folder.READ_ONLY);  // 3.3
-
+            log.debug("진입c");
             // 현재 수신한 메시지 모두 가져오기
             messages = folder.getMessages();      // 3.4
-            
+            log.debug("진입d");
             FetchProfile fp = new FetchProfile();
             // From, To, Cc, Bcc, ReplyTo, Subject & Date
             fp.add(FetchProfile.Item.ENVELOPE);
@@ -146,25 +148,30 @@ public class Pop3Agent {
             log.error("POP3 connection failed!");
             return result;
         }
-
         try {
-            Folder folder = store.getFolder("INBOX");
-            folder.open(Folder.READ_ONLY);
-
-            Message message = folder.getMessage(n);
-
-            MessageFormatter formatter = new MessageFormatter(userid);
-            formatter.setRequest(request);  // 210308 LJM - added
             
+            log.debug("진입");
+            Folder folder = store.getFolder("INBOX");
+            log.debug("진입2");
+            folder.open(Folder.READ_ONLY);
+            log.debug("진입3");
+            Message message = folder.getMessage(n);
+            log.debug("진입4");
+            MessageFormatter formatter = new MessageFormatter(userid);
+            log.debug("진입5");
+            formatter.setRequest(request);  // 210308 LJM - added
+            log.debug("진입6");
             result = formatter.getMessage(message);
+            log.debug("진입7");
+            log.debug(result);
             sender = formatter.getSender();  // 220612 LJM - added
             subject = formatter.getSubject();
             body = formatter.getBody();
-
+            log.debug("진입8");
             folder.close(true);
             store.close();
         } catch (Exception ex) {
-            log.error("Pop3Agent.getMessageList() : exception = {}", ex);
+            log.error("Pop3Agent.getMessage() : exception = {}", ex);
             result = "Pop3Agent.getMessage() : exception = " + ex;
         } finally {
             return result;
