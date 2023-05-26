@@ -71,12 +71,16 @@ public class SystemController {
     @Value("${james.host}")
     private String JAMES_HOST;
 
+    @Value("${file.upload_folder}")
+    private String UPLOAD_FOLDER;
+
     @GetMapping("/")
     public String index() {
         log.debug("index() called...");
         session.setAttribute("host", JAMES_HOST);
         session.setAttribute("debug", "false");
 
+        log.debug("파일을 {} 폴더에 저장...", UPLOAD_FOLDER);
         return "/index";
     }
 
@@ -154,9 +158,8 @@ public class SystemController {
         pop3.setPassword((String) session.getAttribute("password"));
 
         String messageList_c = "";
-
         String messageList = pop3.getMessageList();
-        messageList = messageList.replace("<table>", "<table id=\"mailTable\">");
+        
 
         String patt = "^(\\d+)";
         Pattern pattern = Pattern.compile(patt);
@@ -210,7 +213,7 @@ public class SystemController {
                     ROOT_ID, ROOT_PASSWORD, ADMINISTRATOR, mysqlServerIp, mysqlServerPort, userName, pass, jdbcDriver);
             // if (addUser successful)  사용자 등록 성공 팦업창
             // else 사용자 등록 실패 팝업창
-            if ( agent.addUserDB(username, id, password) && agent.addUser(id, password)) {
+            if (agent.addUserDB(username, id, password) && agent.addUser(id, password)) {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 성공하였습니다.", id));
             } else {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 실패하였습니다.", id));
@@ -246,7 +249,7 @@ public class SystemController {
 
             // if (addUser successful)  사용자 등록 성공 팦업창
             // else 사용자 등록 실패 팝업창
-            if ( agent.addUserDB(username, id, password) && agent.addUser(id, password)) {
+            if (agent.addUserDB(username, id, password) && agent.addUser(id, password)) {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 성공하였습니다.", id));
             } else {
                 attrs.addFlashAttribute("msg", String.format("사용자(%s) 추가를 실패하였습니다.", id));
@@ -431,5 +434,6 @@ public class SystemController {
 
         return "redirect:/del_book";
     }
+
 
 }
