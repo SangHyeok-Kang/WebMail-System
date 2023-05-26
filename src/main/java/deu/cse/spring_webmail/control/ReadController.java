@@ -97,7 +97,7 @@ public class ReadController {
         }
 
         // 1. 내려받기할 파일의 기본 경로 설정
-        String basePath = DOWNLOAD_FOLDER + userId + "\\";
+        String basePath = DOWNLOAD_FOLDER + userId + "/";
 
         // 2. 파일의 Content-Type 찾기
         Path path = Paths.get(basePath + fileName);

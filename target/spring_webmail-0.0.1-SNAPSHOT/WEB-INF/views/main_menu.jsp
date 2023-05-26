@@ -21,6 +21,7 @@ Author     : skylo
 <jsp:useBean id="pop3" scope="page" class="deu.cse.spring_webmail.model.Pop3Agent" />
 <%
     pop3.setHost((String) session.getAttribute("host"));
+    pop3.setHost((String) session.getAttribute("host"));
     pop3.setUserid((String) session.getAttribute("userid"));
     pop3.setPassword((String) session.getAttribute("password"));
 %>
@@ -37,7 +38,11 @@ Author     : skylo
             </c:if>
 
         </script>
+
+
+
     </head>
+
     <body>
         <%@include file="header.jspf"%>
 
