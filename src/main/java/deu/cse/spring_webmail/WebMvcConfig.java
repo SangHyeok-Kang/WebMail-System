@@ -18,6 +18,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new interceptor())
                 .addPathPatterns("/*")
+                .excludePathPatterns("/profile") // 해당 경로는 인터셉터가 가로채지 않는다.
+                .excludePathPatterns("/actuator/*") // 해당 경로는 인터셉터가 가로채지 않는다.
                 .excludePathPatterns("/*.do") // 해당 경로는 인터셉터가 가로채지 않는다.
                 .excludePathPatterns("/") // 해당 경로는 인터셉터가 가로채지 않는다.
                 .excludePathPatterns("/session_timeout") // 해당 경로는 인터셉터가 가로채지 않는다.
