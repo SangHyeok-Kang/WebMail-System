@@ -1,7 +1,7 @@
 # 웹 메일 시스템
 
 <div align = "center">
-  <img src = "" width="80%">
+  <img src = "https://github.com/SangHyeok-Kang/DataRepository/blob/e0054669340984348233bf33f851e10b64d2861d/%EC%9B%B9%20%EB%A9%94%EC%9D%BC%20%EC%8B%9C%EC%8A%A4%ED%85%9C/banner.png">
 </div>
 
 <!--
@@ -25,14 +25,16 @@
 ## 🖥️ 시스템 구조도
 
 <div align = "center">
-  <img src = "">
+  <img src = "https://github.com/SangHyeok-Kang/DataRepository/blob/e0054669340984348233bf33f851e10b64d2861d/%EC%9B%B9%20%EB%A9%94%EC%9D%BC%20%EC%8B%9C%EC%8A%A4%ED%85%9C/%EC%8B%9C%EC%8A%A4%ED%85%9C%20%EC%95%84%ED%82%A4%ED%85%8D%EC%B3%90.png">
 </div>
 
 
 ## 🖥️ 기술 스택
-- **Language** : JAVA JDK 11(Swing)
+- **Language** : JAVA JDK 11, HTML5, JSP
+- **Server** : Spring Framework 2.7.9, Apache Tomcat 9, Docker , Apache James, Nginx 1.25.0
 - **Database** : MySQL 8.0.29
-- **Tools** : Apache NetBeans IDE, Git
+- **OS** : Ubuntu LTS 20.04, Windows 10
+- **Tools** : Apache NetBeans IDE, Git, SonarCloud
 
 <br>
 
@@ -86,6 +88,7 @@
 - 서버 정보나 계정 정보들이 프로그램 코드 내부에 하드코드로 되어있어, 내부 인증에 사용하거나 외부 컴포넌트와 통신을 하는 경우, 관리자 정보가 노출될 수 있어 위험하였습니다.
 - **Jasypt** 라이브러리를 이용하여 프로퍼티 내에 작성된 설정 정보를 암호화하여 노출시키지 않도록 수정하였습니다.
 
+<br>
 
 ## 📲 UI
 
@@ -93,18 +96,19 @@
   
 | 메인 페이지 | 메일 전송 |
 | :---: | :---: |
-| <img width="350" alt="메인 페이지" src=""> | <img width="350" alt="메일 전송" src=""> |
+| <img width="350" alt="메인 페이지" src="https://github.com/SangHyeok-Kang/DataRepository/blob/e0054669340984348233bf33f851e10b64d2861d/%EC%9B%B9%20%EB%A9%94%EC%9D%BC%20%EC%8B%9C%EC%8A%A4%ED%85%9C/%EB%A9%94%EC%9D%B8%20%ED%8E%98%EC%9D%B4%EC%A7%80.png"> | <img width="350" alt="메일 전송" src="https://github.com/SangHyeok-Kang/DataRepository/blob/e0054669340984348233bf33f851e10b64d2861d/%EC%9B%B9%20%EB%A9%94%EC%9D%BC%20%EC%8B%9C%EC%8A%A4%ED%85%9C/%EB%A9%94%EC%9D%BC%20%EC%A0%84%EC%86%A1.png"> |
 
 | 주소록 추가 | 예약 승인 |
 | :---: | :---: |
-| <img width="350" alt="주소록 추가" src=""> | <img width="350" alt="주소록 수정" src=""> |
-
+| <img width="350" alt="주소록 추가" src="https://github.com/SangHyeok-Kang/DataRepository/blob/e0054669340984348233bf33f851e10b64d2861d/%EC%9B%B9%20%EB%A9%94%EC%9D%BC%20%EC%8B%9C%EC%8A%A4%ED%85%9C/%EC%A3%BC%EC%86%8C%EB%A1%9D%20%EC%B6%94%EA%B0%80.png"> | <img width="350" alt="주소록 수정" src="https://github.com/SangHyeok-Kang/DataRepository/blob/e0054669340984348233bf33f851e10b64d2861d/%EC%9B%B9%20%EB%A9%94%EC%9D%BC%20%EC%8B%9C%EC%8A%A4%ED%85%9C/%EC%A3%BC%EC%86%8C%EB%A1%9D%20%EC%88%98%EC%A0%95.png"> |
 
 </div>
 
+<br>
+
 ## 📅 일정 관리
 <div align = "center">
-  <img src = "" width="70%">
+  <img src = "https://github.com/SangHyeok-Kang/DataRepository/blob/e0054669340984348233bf33f851e10b64d2861d/%EC%9B%B9%20%EB%A9%94%EC%9D%BC%20%EC%8B%9C%EC%8A%A4%ED%85%9C/%EC%9D%BC%EC%A0%95.png" width="70%">
 </div>
 
 <br>
